@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 channels = "*"
 django = "*"
+pytest-django = "*"
+pytest-asyncio = "*"
+channels-redis = "*"
 
 [dev-packages]
 

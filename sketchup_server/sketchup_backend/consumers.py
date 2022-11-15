@@ -14,9 +14,9 @@ class BoardConsumer(AsyncConsumer):
             "type": "websocket.accept"
         })
         
-    async def websocket_recieve(self, event):
+    async def websocket_receive(self, event):
         drawing_data = event.get('text', None)
-        self.channel_layer.group_send(
+        await self.channel_layer.group_send(
             self.board_room,
             {
                 "type": "board_data",
