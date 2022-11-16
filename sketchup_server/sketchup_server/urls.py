@@ -18,5 +18,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('back/', include('sketchup_backend.urls')),
+    path('', include('sketchup_backend.urls')),
 ]
