@@ -10,6 +10,14 @@
 - Chat
 - Word
 
+# Views
+- View to create user
+   - Enforce unique username constraint
+- View to create lobby
+   - Enforce unique lobby code constraint
+- View to join lobby
+   - Simply returns whether the respective lobby exists
+
 # Other Features
 - Django Channels for realtime sketch updates
 
