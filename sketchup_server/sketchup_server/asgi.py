@@ -13,6 +13,8 @@ from channels.security.websocket import AllowedHostsOriginValidator
 from django.urls import re_path
 from sketchup_backend.consumers import BoardConsumer
 
+import sketchup_backend.routing
+
 from django.core.asgi import get_asgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sketchup_server.settings')
@@ -23,9 +25,7 @@ application = ProtocolTypeRouter({
     "http": django_asgi_app,
     'websocket': AllowedHostsOriginValidator(
         URLRouter(
-            [
-                re_path("board-comm/", BoardConsumer)
-            ]
+            sketchup_backend.routing.websocket_urlpatterns,
         )
     )
 })
