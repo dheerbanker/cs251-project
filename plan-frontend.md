@@ -22,3 +22,16 @@ main port on which the game is running:
          |_ recieves the drawing coordinates 
          |_ sends the guesses
 https://www.geeksforgeeks.org/simple-chat-room-using-python/
+
+# Chat 
+- side chat box - independent of other componenets.
+    - for picasso - can only view the message.
+    - for guesser - can chat, sledge and audio/video chat.
+- bottom sledge button
+- audio chat option in the bottom 
+
+# setting up the gameplay
+1. user first login or create account 
+2. then he is assigned a role of picasso or gusser
+3. then he is presented with a page of his requirement by react
+4. he play the game the life goes on.
