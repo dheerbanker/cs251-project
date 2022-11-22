@@ -1,5 +1,6 @@
 import React from "react";
 
+// const noop = () => {}
 
 export default class Canvas extends React.Component{
   constructor(props){
@@ -17,7 +18,6 @@ export default class Canvas extends React.Component{
   }
 
   componentDidMount(){
-
     this.loadCanvasContext();
     this.context.lineCap = "round";
     this.context.strokeStyle = "black";

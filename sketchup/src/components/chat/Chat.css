@@ -1,0 +1,60 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+  width: 100%;
+}
+/*we used flexbox to position chat messages to the bottom of chat window
+but flexbox dont allow overflow scroll out of the box
+*/
+.chat-window{
+  overflow-y: scroll;
+  /* max-height: 80vh;
+  min-height: 80vh; */
+  height: 80vh;
+}
+
+.box {
+  height: 200px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin-bottom: 10px;
+
+  overflow-y: auto;
+}
+.box .inner {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  align-items: flex-end;
+  flex-basis: 100%;
+  height: 100%;
+  align-content: flex-end;
+
+  /* min-height: min-content; handles overflow scroll for flex
+  https://stackoverflow.com/questions/21515042/scrolling-a-flexbox-with-overflowing-content
+  */
+  min-height: min-content;
+}
+.box .inner {
+  background-color: #eee;
+  border: 1px solid #ccc;
+  padding: 2px 4px;
+  margin: 2px;
+  display: flex;
+  flex-direction: row;
+  flex-basis: 100%;
+}
+.box .reference {
+  display: flex;
+  flex-direction: row;
+  flex-basis: 100%;
+}
+input {
+  border-radius: 3px;
+  width: 90%;
+  padding: 10px;
+  box-shadow: none;
+  background: none;
+  border: 1px solid #ccc;
+}
