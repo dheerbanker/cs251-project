@@ -26,8 +26,8 @@ export default class ChatWindow extends Component {
         {Array.isArray(messagesList) &&
         messagesList.map((oneMessage, index) => (
             oneMessage.username === this.props.username
-              ? <ChatBubble message={oneMessage.message} username="You" bubbleType="from-me" />
-              : <ChatBubble message={oneMessage.message} username={oneMessage.username} bubbleType="from-them" />
+              ? <ChatBubble message={oneMessage.message} key={index} username="You" bubbleType="from-me" />
+              : <ChatBubble message={oneMessage.message} key={index} username={oneMessage.username} bubbleType="from-them" />
         ))}
         {/* define ref and call it if component is updated */}
         <div

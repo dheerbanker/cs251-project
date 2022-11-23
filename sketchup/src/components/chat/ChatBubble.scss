@@ -5,10 +5,10 @@
 }
 .chat-content{
 	display: block;
-	width: max-content;
+	max-width: 40%;
+	width: fit-content;
 }
 .chat-content p{
-  max-width: 255px;
   word-wrap: break-word;
   margin-bottom: 12px;
   line-height: 24px;

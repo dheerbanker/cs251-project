@@ -1,0 +1,38 @@
+#home-container{
+    width: 100%;
+}
+#game-heading{
+    margin: 120px auto;
+    font-size: 120px;
+}
+
+#play-form {
+    width: 100%;
+    height: fit-content;
+}
+#username-in{
+    width: 80%;
+    margin: auto;
+    margin-bottom: 24px;
+}
+#create-lobby-btn{
+    width: 20%;
+    margin: auto;
+    margin-bottom: 24px;
+}
+#join-lobby-btn{
+    width: 20%;
+    margin: auto;
+    margin-bottom: 24px;
+}
+#lobby-code-in{
+    width: 30%;
+    margin: auto;
+    margin-bottom: 24px;
+}
+#warning-msg-p{
+    grid-column-start: 1;
+    grid-column-end: 11;
+
+    text-align: center;
+}
