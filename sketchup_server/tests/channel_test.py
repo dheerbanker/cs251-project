@@ -11,6 +11,21 @@ from sketchup_server.asgi import application
 from sketchup_backend.consumers import BoardConsumer
 from sketchup_backend.routing import websocket_urlpatterns
 
+# @pytest.mark.asyncio
+# async def test_boardConsumerChannel():
+#     communicator_one = WebsocketCommunicator(URLRouter(websocket_urlpatterns), "/draw/dumlobby/")
+#     communicator_two = WebsocketCommunicator(URLRouter(websocket_urlpatterns), "/draw/dumlobby/")
+
+#     connected, _ = await communicator_one.connect()
+#     assert connected
+#     connected, _ = await communicator_two.connect()
+#     assert connected
+
+#     await communicator_one.send_to(text_data = "test_data")
+#     response = await communicator_two.receive_from()
+
+#     assert response == "test_data"
+
 @pytest.mark.asyncio
 async def test_chatConsumerChannel():
     communicator_one = WebsocketCommunicator(URLRouter(websocket_urlpatterns), "/chat-connect/dumlobby/bullshitBobby")
@@ -25,21 +40,6 @@ async def test_chatConsumerChannel():
     response = await communicator_two.receive_from()
 
     assert response == "{'sender':'bullshitBobby', 'message': 'crappishRon'}"
-
-@pytest.mark.asyncio
-async def test_boardConsumerChannel():
-    communicator_one = WebsocketCommunicator(URLRouter(websocket_urlpatterns), "/draw/dumlobby/")
-    communicator_two = WebsocketCommunicator(URLRouter(websocket_urlpatterns), "/draw/dumlobby/")
-
-    connected, _ = await communicator_one.connect()
-    assert connected
-    connected, _ = await communicator_two.connect()
-    assert connected
-
-    await communicator_one.send_to(text_data = "test_data")
-    response = await communicator_two.receive_from()
-
-    assert response == "test_data"
 
 def test_dummy():
     x=5

@@ -29,6 +29,7 @@ class BoardConsumer(AsyncConsumer):
 
     async def websocket_disconnect(self, event):
         await self.channel_layer.group_discard(self.room_name, self.channel_name)
+        super().websocket_disconnect(event)
 
 class ChatConsumer(AsyncConsumer):
     async def websocket_connect(self, event):
@@ -63,3 +64,4 @@ class ChatConsumer(AsyncConsumer):
 
     async def websocket_disconnect(self, event):
         await self.channel_layer.group_discard(self.room_name, self.channel_name)
+        super().websocket_disconnect(event)

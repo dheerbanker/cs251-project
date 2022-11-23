@@ -9,6 +9,7 @@ django = "*"
 pytest-django = "*"
 pytest-asyncio = "*"
 channels-redis = "*"
+daphne = "*"
 
 [dev-packages]
 
