@@ -11,7 +11,7 @@ export default class ChatComposer extends Component {
   handleSubmit = event => {
     event.preventDefault();
     // send event value to parent component via calling props
-    this.props.submitted(this.state.new);
+    this.props.submitted({username: this.props.username, message: this.state.new});
     // remove single message stored in this component state
     // and empty input coz form was submitted
     this.setState({

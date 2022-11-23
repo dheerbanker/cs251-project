@@ -31,6 +31,8 @@ div.from-me{
 p.from-me {
 	color: white; 
 	background: #0B93F6;
+
+	text-align: start;
 		
 	&:before {
 		right: -7px;
@@ -54,6 +56,8 @@ div.from-them{
 p.from-them {
 	color: black;
 	background: #E5E5EA;
+
+	text-align: start;
 		
 	&:before {
 		left: -7px;

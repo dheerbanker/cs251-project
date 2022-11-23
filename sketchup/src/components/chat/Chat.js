@@ -9,17 +9,20 @@ export default class Chat extends Component {
     super(props);
     this.state = {
       messages: [
-        // { text: "First stored message" },
-        // { text: "Second stored message" }
+        { username: "moriarty", message: "Game?" },
+        { username: "sherlock", message: "Game." },
+        { username: "watson", message: "No, no, just hold on a second" }
       ]
     };
+
+    this.username = "watson";
   }
 
   // if new message was submitted from child component // process
   submitted = getNewMessage => {
-    if (getNewMessage !== "") {
+    if (getNewMessage.message !== "") {
       // match the state format
-      const newMessage = { text: getNewMessage };
+      const newMessage = getNewMessage;
       // merge new message in copy of state stored messages
       let updatedMessages = [...this.state.messages, newMessage];
       // update state
@@ -34,9 +37,9 @@ export default class Chat extends Component {
       <div className="chat-zone">
         <h1>Chat</h1>
         {/* send stored messages as props to chat window */}
-        <ChatWindow messagesList={this.state.messages} />
+        <ChatWindow messagesList={this.state.messages} username={this.username} />
         {/* send submitted props to chat composer */}
-        <ChatComposer submitted={this.submitted} />
+        <ChatComposer submitted={this.submitted} username={this.username} />
       </div>
     );
   }
