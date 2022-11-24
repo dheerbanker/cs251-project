@@ -14,9 +14,13 @@
 - View to create user
    - Enforce unique username constraint
 - View to create lobby
+   - create 6 char long lobby name
+   - add it to the lobby database
    - Enforce unique lobby code constraint
 - View to join lobby
+   - find the lobby of the given name
    - Simply returns whether the respective lobby exists
+   - make modifications to the models of the lobby to record the state of the current players in the lobby  
 
 # Other Features
 - Django Channels for realtime sketch updates

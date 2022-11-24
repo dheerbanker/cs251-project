@@ -45,23 +45,26 @@ class ChatConsumer(AsyncConsumer):
         })
 
     async def websocket_receive(self, event):
-        message = event.get("message", None)
+        message = event.get("text", None)
 
         if message is None:
             return
 
         await self.channel_layer.group_send(self.room_name, {
             "type": "chat.data",
-            "sender": self.user_name,
+            "username": self.user_name,
             "message": message
         })
 
     async def chat_data(self, event):
-        await self.send_json({
-            "sender": event["sender"],
-            "message": event["message"],
+        await self.send({
+            "type": "websocket.send",
+            "text": json.dumps({
+                "username": event["username"],
+                "message": event["message"],
+                })
         })
 
     async def websocket_disconnect(self, event):
         await self.channel_layer.group_discard(self.room_name, self.channel_name)
-        super().websocket_disconnect(event)
+        # super().websocket_disconnect(event)

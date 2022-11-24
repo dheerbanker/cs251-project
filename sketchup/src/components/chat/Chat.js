@@ -15,7 +15,27 @@ export default class Chat extends Component {
       ]
     };
 
-    this.username = "watson";
+    this.username = `user${Math.floor(Math.random()*100000)}`;
+
+    this.chat_server = new WebSocket('ws://127.0.0.1:8000/chat-connect/room/' + this.username)
+  }
+  
+
+
+  componentDidMount(){
+    this.chat_server.onopen = () => {
+      console.log("connected to the chat server")
+    }
+
+    this.chat_server.onmessage = (event) => {
+      const new_msg = JSON.parse(event.data);
+      if(new_msg.username === this.username) return;
+      console.debug(`Received`)
+      let updatedMessages = [...this.state.messages, JSON.parse(event.data)]
+      this.setState({
+        messages: updatedMessages
+      })
+    }
   }
 
   // if new message was submitted from child component // process
@@ -29,6 +49,9 @@ export default class Chat extends Component {
       this.setState({
         messages: updatedMessages
       });
+
+      this.chat_server.send(newMessage.message)
+      console.debug(`Sent message ${newMessage.message}`)
     }
   };
 
