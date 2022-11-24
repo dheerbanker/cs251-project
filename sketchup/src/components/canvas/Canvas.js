@@ -28,10 +28,10 @@ export default class Canvas extends React.Component{
     this.context2.strokeStyle = "black";
     this.context2.lineWidth = 1;
     this.server_socket.onopen = () => {
-      console.log("socket connected")
+      // console.log("socket connected")
     }
     this.server_socket.onmessage = (event) => {
-      console.log(event)
+      // console.log(event)
       this.showPoints(JSON.parse(event.data).point.x, JSON.parse(event.data).point.y)
     }
   }
@@ -66,7 +66,7 @@ export default class Canvas extends React.Component{
         y : offsetY
       }
     }
-    console.log(msg)
+    // console.log(msg)
     this.server_socket.send(JSON.stringify(msg))
     // this.server_socket.onopen = (event) => {
     // }

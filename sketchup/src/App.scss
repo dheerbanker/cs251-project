@@ -38,3 +38,23 @@
     transform: rotate(360deg);
   }
 }
+
+.nopad{
+  padding: 0px !important;
+}
+.nomargin{
+  margin: 0px !important;
+}
+.automargin{
+  margin: auto;
+}
+
+.debug-border{
+  border: 1px solid red;
+}
+.fixed{
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+}

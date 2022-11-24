@@ -1,21 +1,30 @@
 #scoreboard-container{
     overflow-y: scroll;
-    width: 50%;
-
-    margin: auto;
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .score-record{
     border: 1px solid gray;
 
-    width: 100%;
-
-    margin: 12px auto;
+    /* margin: 12px auto; */
 }
 
 .rank-indicator{
     font-size: large;
     font-weight: 700;
 
+    border-bottom: 1px solid gray;
+
     margin: auto;
+}
+.scoreboard-username{
+    margin: auto;
+
+    min-width: 10rem;
+
+    width: 100%;
+
+    /* padding: 6px 24px; */
 }

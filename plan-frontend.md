@@ -35,6 +35,8 @@ https://www.geeksforgeeks.org/simple-chat-room-using-python/
     - for guesser - can chat, sledge and audio/video chat.
 - bottom sledge button
 - audio chat option in the bottom 
+## TODO
+- Disable chatbox in a better way. Currently, it just stops responding to enter key.
 
 # setting up the gameplay
 1. \<deprecated\> user first login or create account 

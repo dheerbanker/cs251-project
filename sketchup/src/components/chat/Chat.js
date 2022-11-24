@@ -5,6 +5,9 @@ import ChatWindow from "./ChatWindow";
 import ChatComposer from "./ChatComposer";
 
 export default class Chat extends Component {
+  static CORRECT_GUESSED_IDENTIFIER = "!*crrctgss*!";
+  static GAME_END_IDENTIFIER = "!*dsblchtbx*!"
+
   constructor(props) {
     super(props);
     this.state = {
@@ -12,25 +15,32 @@ export default class Chat extends Component {
         { username: "moriarty", message: "Game?" },
         { username: "sherlock", message: "Game." },
         { username: "watson", message: "No, no, just hold on a second" }
-      ]
+      ],
+      chatbox_disabled: (this.props.chatbox_disabled!==undefined) ? this.props.chatbox_disabled : false,
     };
 
     this.username = `user${Math.floor(Math.random()*100000)}`;
+    this.lobby = "room";
+    if(this.props.username !== undefined) this.username = this.props.username;
+    if(this.props.lobby !== undefined) this.lobby = this.props.lobby;
 
-    this.chat_server = new WebSocket('ws://127.0.0.1:8000/chat-connect/room/' + this.username)
+    this.chat_server = new WebSocket(`ws://127.0.0.1:8000/chat-connect/${this.lobby}/${this.username}`);
+    // this.chat_server = new WebSocket('ws://127.0.0.1:8000/chat-connect/room/' + this.username)
   }
-  
-
 
   componentDidMount(){
     this.chat_server.onopen = () => {
-      console.log("connected to the chat server")
     }
 
     this.chat_server.onmessage = (event) => {
       const new_msg = JSON.parse(event.data);
+      // TODO: Add code here to check if the recieved message is of a special type (like a word-guessed-correctly special message) and call the correct procedure for the same
+      if(new_msg.message.startsWith(Chat.GAME_END_IDENTIFIER)){
+        this.setState({chatbox_disabled: true});
+        if(this.props.onRefreshGameState !== undefined) this.props.onRefreshGameState();
+        return;
+      }
       if(new_msg.username === this.username) return;
-      console.debug(`Received`)
       let updatedMessages = [...this.state.messages, JSON.parse(event.data)]
       this.setState({
         messages: updatedMessages
@@ -38,20 +48,29 @@ export default class Chat extends Component {
     }
   }
 
-  // if new message was submitted from child component // process
   submitted = getNewMessage => {
     if (getNewMessage.message !== "") {
-      // match the state format
       const newMessage = getNewMessage;
-      // merge new message in copy of state stored messages
       let updatedMessages = [...this.state.messages, newMessage];
-      // update state
       this.setState({
         messages: updatedMessages
       });
 
-      this.chat_server.send(newMessage.message)
-      console.debug(`Sent message ${newMessage.message}`)
+      if(this.props.correct_word !== undefined && newMessage.message === this.props.correct_word){
+        if(this.props.onCorrectGuess !== undefined) this.props.onCorrectGuess();
+        /*TODO: Add code here to:
+        - Handle score calculation
+        - Request server to update game state, points, etc.
+        */
+        this.chat_server.send(`${Chat.CORRECT_GUESSED_IDENTIFIER}${this.props.username} guessed the correct word!`);
+        this.chat_server.send(Chat.GAME_END_IDENTIFIER);
+        return;
+      }
+      else{
+        //TODO: Add code here to not allow users to send special messages.
+        this.chat_server.send(newMessage.message)
+      }
+
     }
   };
 
@@ -60,9 +79,9 @@ export default class Chat extends Component {
       <div className="chat-zone">
         <h1>Chat</h1>
         {/* send stored messages as props to chat window */}
-        <ChatWindow messagesList={this.state.messages} username={this.username} />
+        <ChatWindow messagesList={this.state.messages} username={this.username} correct_guess_identifier={Chat.CORRECT_GUESSED_IDENTIFIER} />
         {/* send submitted props to chat composer */}
-        <ChatComposer submitted={this.submitted} username={this.username} />
+        <ChatComposer submitted={this.submitted} username={this.username} disabled={this.state.chatbox_disabled} />
       </div>
     );
   }

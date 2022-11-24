@@ -6,6 +6,7 @@ import Canvas from './components/canvas/Canvas';
 import Chat from './components/chat/Chat';
 import Home from './components/home/Home'
 import ScoreBoard from './components/scoreboard/ScoreBoard';
+import MainGame from './components/game/MainGame';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route exact path='/chat' element={<Chat />} />
           <Route exact path='/home' element={<Home />} />
           <Route exact path='/scoreboard' element={<ScoreBoard />} />
+          <Route exact path='/game' element={<MainGame />} />
         </Routes>
       </BrowserRouter>
     </div>
