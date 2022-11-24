@@ -1,65 +1,94 @@
 from django.shortcuts import render
 import json
-from django.http import HttpResponse, QueryDict
+import random
+from django.http import HttpResponse
 from django.views import View
 from .models import Player, Lobby
 import re
+import string
 
 class LobbyView(View):
+    # creates a new lobby
+    # params required: player_name
     def lobby_name_constraint(self,name):
         if(len(name) != 6):
-            # return HttpResponse("provide a valid lobby code", status=403)
             return False
         if(re.search(r"[a-z]{6}",name)):
             return True
         return False
+
+    def get(self,request):
+        while True:
+            lobby_name = ''.join(random.choices(string.ascii_lowercase, k=6))
+            if not Lobby.objects.filter(code=lobby_name).count():
+               break 
+        Lobby.objects.create(code=lobby_name)
+        req_player=Player.objects.get(player_name = request.GET['player_name'])
+        req_player.code = Lobby.objects.get(code = lobby_name)
+        req_player.save()
+        return HttpResponse(f"lobby {lobby_name} creation successful",status=200)
+
+
     def post(self, request):
         # meant to take in the lobby code as a parameter,
         # return failure signal if the lobby not found
         # return success signal if the lobby is found
+
+        # passed param: code , player_name
         if(not self.lobby_name_constraint(request.POST['code'])):
             return HttpResponse("provide a valid lobby code", status=403)
 
-        if request.POST['action'] == "create":
-            req_code = request.POST['code']
-            try:
-                Lobby.objects.get(code=req_code) 
-                return HttpResponse("joined the lobby",status=200)
-            except Lobby.DoesNotExist as e:
-                return HttpResponse("Lobby does not exist", status=403)
-        else:
-            req_code = request.POST['code']
-            try:
-                Lobby.objects.get(code=req_code) 
-                return HttpResponse("Lobby already exists",status=403)
-            except Lobby.DoesNotExist as e:
-                Lobby.objects.create(code = req_code)
-                return HttpResponse("lobby creation successful",status=200)
+        req_code = request.POST['code']
+        try:
+            lobby = Lobby.objects.get(code=req_code) 
+            player = Player.objects.get(player_name=request.POST['player_name'])
+            player.code = lobby 
+            player.save()
+            # Player.objects.get(player_name=request.POST['player_name']).save()
+            return HttpResponse("joined the lobby",status=200)
+        except Lobby.DoesNotExist as e:
+            return HttpResponse("Lobby does not exist", status=403)
 
-        
-
-    # def put(self, request):
-    #     # req_code = request.POST['code']
-    #     qd = QueryDict(request.body)
-    #     print(qd)
-    #     req_code = request.POST['code']
-    #     try:
-    #        Lobby.objects.get(code=req_code) 
-    #        return HttpResponse("Lobby already exists",status=403)
-    #     except Lobby.DoesNotExist as e:
-    #         Lobby.objects.create(code = req_code)
-    #         return HttpResponse("lobby creation successful",status=200)
 
 class LoginView(View):
+    # login with a new userid
+    # params: player_name 
     def post(self, request):
-        username = request.POST['username']
-        # for user in User.objects.all('Select * from auth_user'):
-        # for user in User.objects.all():
-
-            # print(user)
+        username = request.POST['player_name']
         try:
             Player.objects.get(player_name = username)
             return HttpResponse("Username already exists",status=403)
         except Player.DoesNotExist as e:
             Player.objects.create(player_name = username)
             return HttpResponse("Acknowledge", status=200)
+
+class GamePlay(View):
+    def get(self,request):
+        req_code = request.GET['code']
+        playerList = Player.objects.filter(code=req_code)
+        curr_drawer =  playerList[random.randint(0,len(playerList)-1)].player_name
+        lobby = Lobby.objects.get(code=req_code) 
+        lobby.curr_drawer = curr_drawer 
+        lobby.save()
+
+        # player_score = [
+        # return HttpResponse(curr_drawer,status=200)
+
+    def post(self, request):
+        req_code = request.POST['code']
+        # format:
+        # code : lsdfjl
+        # players : [{
+        #    player1 : 23
+        #    player2 : 2342
+        #    player3 : 0
+        # }]
+
+
+        for k in request.POST['players']:
+            print(k)
+        # print(request.POST['players'])
+        # print(jsonData) 
+        return HttpResponse("testing")
+
+

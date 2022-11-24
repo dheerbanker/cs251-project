@@ -11,7 +11,6 @@ export default class Canvas extends React.Component{
 
     this.state = (
       {
-        broadcastStarted: false,
         isDrawing : false
       }
     )
@@ -31,8 +30,8 @@ export default class Canvas extends React.Component{
       // console.log("socket connected")
     }
     this.server_socket.onmessage = (event) => {
-      // console.log(event)
-      this.showPoints(JSON.parse(event.data).point.x, JSON.parse(event.data).point.y)
+      console.log(event)
+      this.showPoints(JSON.parse(event.data).point.x, JSON.parse(event.data).point.y,JSON.parse(event.data).newLine)
     }
   }
 
@@ -49,6 +48,16 @@ export default class Canvas extends React.Component{
     this.context.beginPath();
     this.context.moveTo(offsetX, offsetY);
     this.setIsDrawing(true);
+    const msg = {
+      point : {
+        x : offsetX,
+        y : offsetY 
+      },
+      newLine: true
+    }
+    // console.log(msg)
+    this.server_socket.send(JSON.stringify(msg))
+
   }
 
   draw = ({ nativeEvent }) => {
@@ -64,7 +73,8 @@ export default class Canvas extends React.Component{
       point : {
         x : offsetX,
         y : offsetY
-      }
+      },
+      newLine: false 
     }
     // console.log(msg)
     this.server_socket.send(JSON.stringify(msg))
@@ -72,13 +82,10 @@ export default class Canvas extends React.Component{
     // }
   };
 
-  showPoints = (x,y) => {
-    if(!this.state.broadcastStarted){
-      this.context2.moveTo(x,y);
-      this.setState({
-        broadcastStarted : true 
-      })
-      return
+  showPoints = (x,y,newLine) => {
+    if(newLine){
+      this.context2.beginPath()
+      this.context2.moveTo(x,y)
     }
 
     this.context2.lineTo(x,y);
@@ -94,8 +101,8 @@ export default class Canvas extends React.Component{
     if(this.props.drawAllowed){
       return(
         <canvas
-        width={this.props.dim.width}
-        height={this.props.dim.height}
+        // width={this.props.dim.width}
+        // height={this.props.dim.height}
         onMouseDown={this.startDrawing}
         onMouseUp={this.finishDrawing}
         onMouseMove={this.draw}
@@ -107,8 +114,8 @@ export default class Canvas extends React.Component{
     else{
       return(
         <canvas
-        width={this.props.dim.width}
-        height={this.props.dim.height}
+        // width={this.props.dim.width}
+        // height={this.props.dim.height}
         style={{border: "1px solid"}}
         ref={this.canvasRef} />
       )
@@ -118,7 +125,6 @@ export default class Canvas extends React.Component{
   } 
 
   loadCanvasContext = () => {
-    // console.log(this.canvasRef)  
 
     if(this.context === undefined || Object.keys(this.context).length === 0)
       this.context = this.canvasRef.current.getContext("2d");

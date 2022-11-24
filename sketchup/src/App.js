@@ -13,7 +13,8 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route exact path='/canvas' element={<Canvas dim={{height:500,width:800}} drawAllowed={true} />} />
+          {/* <Route exact path='/canvas' element={<Canvas dim={{height:500,width:800}} drawAllowed={true} />} /> */}
+          <Route exact path='/canvas' element={<Canvas drawAllowed={true} />} />
           <Route exact path='/chat' element={<Chat />} />
           <Route exact path='/home' element={<Home />} />
           <Route exact path='/scoreboard' element={<ScoreBoard />} />
