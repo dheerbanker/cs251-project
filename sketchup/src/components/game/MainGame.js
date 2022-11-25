@@ -7,6 +7,7 @@ import Canvas from "../canvas/Canvas";
 import './MainGame.css'
 import API from '../../utils/Endpoints';
 import { useLocation } from "react-router-dom";
+import {Navigate} from "react-router-dom";
 
 class MainGame extends Component {
     constructor(props){
@@ -21,6 +22,8 @@ class MainGame extends Component {
             lobby_code: lobby_code,
             cur_word: "LookAtMe",
             scoreboard: [],
+// might be problematic
+// PROBLEM
             drawer: ""
         };
         
@@ -51,12 +54,28 @@ class MainGame extends Component {
                         cur_word: new_w,
                         scoreboard: new_sc,
                         drawer: new_d,
-                    });
+                    }).then(() => {
+                        if(this.state.drawer == ""){
+                            <Navigate to="/finalScore" replace={true} />
+                        }
+                    }
+                    );
+
 
                     console.log("State successfully updated");
             })
             .catch((error) => {console.log(error);});
         }, 2000);
+    }
+
+    updateScoreBoard = async () => {
+        fetch(API.GAME_STATE + `?code=${this.state.lobby_code}`)
+        .then((response) => response.json())
+        .then((data) => {
+            if(!(data.hasOwnProperty("word") || data.hasOwnProperty("scoreboard") || data.hasOwnProperty("drawer"))) console.error("Found no relevant data in updateScoreBoard");
+            let new_sc = this.state.scoreboard;
+            return new_sc
+        })
     }
 
     requestStateRefresh = () => {
@@ -80,7 +99,7 @@ class MainGame extends Component {
                 </div>
                 <div className="w-100"></div>
                 <div className="col-lg-2" id="game-scoreboard-container">
-                    <ScoreBoard score_list={this.state.scoreboard}/>
+                    <ScoreBoard score_list={this.state.scoreboard} updateScoreBoard={this.updateScoreBoard}/>
                 </div>
                 <div className="col-lg-7" id="game-draw-container">
                     <div className="row">

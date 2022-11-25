@@ -119,8 +119,6 @@ class GamePlay(View):
 # word , scoreboard , drawer
 class GameState(View):
     def get(self, request):
-
-    
         req_code = request.GET['code']
         lobby = Lobby.objects.get(code=req_code) 
         playerList = Player.objects.filter(code=req_code)
