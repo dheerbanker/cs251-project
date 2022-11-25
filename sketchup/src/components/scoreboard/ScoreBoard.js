@@ -9,12 +9,13 @@ export default class ScoreBoard extends Component {
         //TODO: initialise state here based on all the usernames present in some variable in props
 
         this.state = {
-            score_list: [
-                {username: 'sherlock', score: 200},
-                {username: 'moriarty', score: 100},
-                {username: 'watson', score: 50},
-                {username: 'mycroft', score: 25},
-            ]
+            // score_list: [
+            //     {username: 'sherlock', score: 200},
+            //     {username: 'moriarty', score: 100},
+            //     {username: 'watson', score: 50},
+            //     {username: 'mycroft', score: 25},
+            // ]
+            score_list: this.props.score_list,
         }
     }
 

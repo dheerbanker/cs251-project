@@ -2,6 +2,8 @@ const SERVER_URL = '127.0.0.1:8000';
 const game_state_ep = '/';
 const create_lobby_ep = '/lobby/';
 const choose_username_ep = '/login/';
+const get_game_state_ep = '/getgamestate/';
+const refresh_game_state_ep = '/loadgame/'
 
 class API {
     static get GAME_STATE(){
@@ -15,5 +17,12 @@ class API {
     }
     static get JOIN_LOBBY(){
         return SERVER_URL + create_lobby_ep;
+    }
+
+    static get GAME_STATE(){
+        return SERVER_URL + get_game_state_ep;
+    }
+    static get REFRESH_GAME_STATE(){
+        return SERVER_URL + refresh_game_state_ep;
     }
 }

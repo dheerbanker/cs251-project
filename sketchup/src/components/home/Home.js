@@ -15,7 +15,7 @@ class Home extends Component {
             lobby_code: "",
             show_lobby_code_input: false,
             join_btn_text: "Join using code",
-        }
+        };
     }
 
     onLobbyCodeChanged = event => {

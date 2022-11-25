@@ -3,6 +3,11 @@
     width: 100vw;
 }
 
+#game-information-bar{
+    width: 100%;
+    height: fit-content;
+}
+
 #game-scoreboard-container{
     border: 1px solid black;
     height: 100%;

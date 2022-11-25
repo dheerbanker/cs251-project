@@ -1,5 +1,5 @@
 import React from "react";
-const server_url = "ws://127.0.0.1:8000"
+const socket_url = "ws://127.0.0.1:8000"
 
 // const noop = () => {}
 
@@ -15,10 +15,14 @@ export default class Canvas extends React.Component{
       }
     )
 
+    this.lobby_code = "room";
+    if(this.props.lobby_code !== undefined) this.lobby_code = this.props.lobby_code;
   }
-    server_socket = new WebSocket(server_url + "/draw/room/")
-
+  
   componentDidMount(){
+    // server_socket = new WebSocket(socket_url + "/draw/room/")
+    this.server_socket = new WebSocket(socket_url + `/draw/${this.lobby_code}`);
+
     this.loadCanvasContext();
     this.context.lineCap = "round";
     this.context.strokeStyle = "black";
@@ -26,12 +30,20 @@ export default class Canvas extends React.Component{
     this.context2.lineCap = "round";
     this.context2.strokeStyle = "black";
     this.context2.lineWidth = 1;
-    this.server_socket.onopen = () => {
-      // console.log("socket connected")
-    }
+    // this.server_socket.onopen = () => {
+    //   // console.log("socket connected")
+    // }
     this.server_socket.onmessage = (event) => {
       console.log(event)
-      this.showPoints(JSON.parse(event.data).point.x, JSON.parse(event.data).point.y,JSON.parse(event.data).newLine)
+      point_data = JSON.parse(event.data);
+      this.showPoints(point_data.point.x, point_data.point.y,point_data.newLine)
+    }
+  }
+
+  componentDidUpdate = (prevProps, prevState) => {
+    if(prevProps.drawAllowed !== this.props.drawAllowed){
+      this.loadCanvasContext();
+      this.context.clearRect(0, 0, this.canvasRef.current.width, this.canvasRef.current.height);
     }
   }
 
@@ -84,8 +96,8 @@ export default class Canvas extends React.Component{
 
   showPoints = (x,y,newLine) => {
     if(newLine){
-      this.context2.beginPath()
-      this.context2.moveTo(x,y)
+      this.context2.beginPath();
+      this.context2.moveTo(x,y);
     }
 
     this.context2.lineTo(x,y);

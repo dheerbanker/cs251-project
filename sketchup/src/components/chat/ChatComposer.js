@@ -39,6 +39,7 @@ export default class ChatComposer extends Component {
             placeholder="Type & hit enter"
             onChange={this.handleCompose}
             value={this.state.new}
+            disabled={this.props.disabled}
           />
         </form>
       </div>
