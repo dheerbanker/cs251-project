@@ -29,12 +29,15 @@ body{
     margin: auto;
     margin-bottom: 24px;
 
+    margin-right: 6px;
+
     color: white;
 }
 #join-lobby-btn{
     width: 20%;
     margin: auto;
     margin-bottom: 24px;
+    margin-left: 6px;
     color: white;
 }
 #lobby-code-in{

@@ -7,7 +7,8 @@ import Chat from './components/chat/Chat';
 import Home from './components/home/Home'
 import ScoreBoard from './components/scoreboard/ScoreBoard';
 import MainGame from './components/game/MainGame';
-import FinalScore from './components/final_score/finalScore';
+import FinalScore from './components/final_score/FinalScore';
+import LeaderBoard from './components/leaderboard/LeaderBoard';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route exact path='/scoreboard' element={<ScoreBoard />} />
           <Route exact path='/game' element={<MainGame />} />
           <Route exact path='/finalScore' element={<FinalScore />} />
+          <Route exact path='/leaderboard' element={<LeaderBoard />} />
         </Routes>
       </BrowserRouter>
     </div>

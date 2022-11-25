@@ -6,6 +6,9 @@
 #game-information-bar{
     width: 100%;
     height: fit-content;
+
+    background-color: #311B92;
+    color: white;
 }
 
 #game-scoreboard-container{
@@ -13,6 +16,8 @@
     height: 100%;
     padding: 0px;
     padding-left: 12px;
+
+    background-color: #B39DDB;
 }
 #game-draw-container{
     border: 1px solid black;
@@ -21,6 +26,8 @@
 #game-chat-container{
     border: 1px solid black;
     height: 100%;
+
+    background-color: #B39DDB;
 }
 
 #game-word-container{

@@ -3,6 +3,7 @@ const create_lobby_ep = '/lobby/';
 const choose_username_ep = '/login/';
 const get_game_state_ep = '/getgamestate/';
 const refresh_game_state_ep = '/loadgame/'
+const leaderboard_ep = '/leaderboard/'
 
 export default class API {
     static get CREATE_LOBBY(){
@@ -20,5 +21,9 @@ export default class API {
     }
     static get REFRESH_GAME_STATE(){
         return SERVER_URL + refresh_game_state_ep;
+    }
+
+    static get LEADERBOARD(){
+        return SERVER_URL + leaderboard_ep;
     }
 }

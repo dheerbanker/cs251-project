@@ -1,0 +1,10 @@
+#final-score-container{
+    height:100%;
+    width:50%;
+
+    margin: 0px auto;
+
+    padding: 4rem;
+
+    text-align: center;
+}

@@ -151,4 +151,4 @@ class LeaderboardView(View):
     def get(self, request):
         res = [{"player_name": entry.player_name, "score": entry.score} for entry in Leaderboard.objects.all().order_by('-score')]
 
-        return HttpResponse(json.dumps(res), status=200)
+        return HttpResponse(json.dumps(res[:15]), status=200)

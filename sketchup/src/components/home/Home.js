@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import API from '../../utils/Endpoints';
 
@@ -139,10 +139,14 @@ class Home extends Component {
                     <input type="text" id="username-in" placeholder="Player Name" value={this.state.username} onChange={this.onUsernameChanged} />
                     <br/>
                     <button className="btn btn-primary" id="create-lobby-btn" onClick={this.onCreateLobbyClicked}>Create Lobby</button>
-                    <br/>
                     <button className="btn btn-primary" id="join-lobby-btn" onClick={this.onJoinLobbyClicked}>{this.state.join_btn_text}</button>
                     <br/>
                     {this.state.show_lobby_code_input && <input type="text" id="lobby-code-in" placeholder="Lobby Code" value={this.state.lobby_code} onChange={this.onLobbyCodeChanged} />}
+                    <br/>
+                    
+                    <Link to="/leaderboard">
+                        <button className="btn btn-primary" style={{"color": "white"}}>Leaderboard</button>
+                    </Link>
                 </div>
                 <br/>
                 {!(this.state.warning_message === "") && <p className="text-danger" id="warning-msg-p">{this.state.warning_message}</p>}

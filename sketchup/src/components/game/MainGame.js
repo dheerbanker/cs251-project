@@ -6,7 +6,7 @@ import Canvas from "../canvas/Canvas";
 
 import './MainGame.css'
 import API from '../../utils/Endpoints';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {Navigate} from "react-router-dom";
 
 class MainGame extends Component {
@@ -20,22 +20,17 @@ class MainGame extends Component {
         this.state = {
             username: username,
             lobby_code: lobby_code,
-            cur_word: "LookAtMe",
+            cur_word: "_",
             scoreboard: [],
 // might be problematic
 // PROBLEM
-            drawer: ""
+            drawer: "_"
         };
         
         this.refreshGameState();
     }
 
     refreshGameState = () => {
-        /* 
-        TODO: Add code here to:
-        - Get new word, drawer, scores
-        - Update the canvas and chatbox status accordingly (drawer shouldn't be accessing chat, guessers shouldn't be accessing canvas)
-        */
        setTimeout(() => {
             fetch(API.GAME_STATE + `?code=${this.state.lobby_code}`)
             .then((response) => response.json())
@@ -54,18 +49,16 @@ class MainGame extends Component {
                         cur_word: new_w,
                         scoreboard: new_sc,
                         drawer: new_d,
-                    }).then(() => {
-                        if(this.state.drawer == ""){
-                            <Navigate to="/finalScore" replace={true} />
-                        }
-                    }
-                    );
-
+                    });
 
                     console.log("State successfully updated");
             })
             .catch((error) => {console.log(error);});
         }, 2000);
+    }
+
+    componentDidUpdate(prevProps, prevState){
+        if(this.state.drawer === "") this.props.navigate("/finalScore", {state:{score_list:this.state.scoreboard}, replace:true});
     }
 
     updateScoreBoard = async () => {
@@ -126,6 +119,7 @@ class MainGame extends Component {
 
 export default function(props){
     const loc = useLocation();
+    const nav = useNavigate();
 
-    return(<MainGame {...props} location={loc}/>)
+    return(<MainGame {...props} location={loc} navigate={nav} />)
 }
