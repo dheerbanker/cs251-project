@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import { useNavigate } from "react-router-dom";
 
 import './Home.css';
 
@@ -28,11 +29,45 @@ export default class Home extends Component {
     onUsernameSubmitted(){
         if(this.state.username === ""){
             this.showWarning("Can't have an empty username");
+            return;
         }
+
+        var username_submission = fetch(API.CHOOSE_USERNAME,{
+            method: 'POST',
+            body: JSON.stringify({player_name: this.state.username}),
+        })
+        .then((response) => response.status, (error) => {console.error(error);});
+        return username_submission;
     }
 
-    onCreateLobbyClicked(event){
+    async onCreateLobbyClicked(event){
         // TODO: Add code to handle the clicking of creation of a new lobby
+        username_status = await this.onUsernameSubmitted();
+        if(username_status === 200){
+            lobby_creation_response = await fetch(API.CREATE_LOBBY, {
+                    method: 'GET',
+                    body: JSON.stringify({player_name: this.state.username}),
+            }).then((response) => response.json());
+
+            if(lobby_creation_response.hasOwnProperty("lobby_code")){
+                //TODO: Add code to launch a game instance with the respective lobby code and username
+                var navigate = useNavigate();
+                navigate("/game", { username: this.state.username, lobby_code: lobby_creation_response.lobby_code});
+                // alert(`Would now proceed to the game screen, lobbycode:${lobby_creation_response.lobby_code};username:${this.state.username}`);
+            }else{
+                this.setState({
+                    warning_message: "Unknown error occurred while attempting lobby creation, please try again",
+                });
+            }
+        }else if(username_status === 403){
+            this.setState({
+                warning_message: `Name ${this.state.username} is already taken, please choose another player name`
+            });
+        }else{
+            this.setState({
+                warning_message: "Unknown error occurred while attempting login, please try again"
+            })
+        }
     }
 
     showWarning = message => {

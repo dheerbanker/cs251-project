@@ -5,23 +5,31 @@ import Chat from "../chat/Chat";
 import Canvas from "../canvas/Canvas";
 
 import './MainGame.css'
+import {API} from '../../utils/Endpoints';
+import { useLocation } from "react-router-dom";
 
 export default class MainGame extends Component {
     constructor(props){
         super(props);
     
+        var {username, lobby_code} = useLocation();
+        if(username === undefined || lobby_code === undefined){this.state={error:"Received execution-critical information as null"};return;}
+
         this.state = {
             cur_word: "LookAtMe",
             chat_allowed: true,
             draw_allowed: true,
+            scoreboard: [],
         };
     }
 
     refreshGameState(){
-        /* TODO: Add code here to:
+        /* 
+        TODO: Add code here to:
         - Get new word, drawer, scores
         - Update the canvas and chatbox status accordingly (drawer shouldn't be accessing chat, guessers shouldn't be accessing canvas)
         */
+        
     }
 
     render(){
