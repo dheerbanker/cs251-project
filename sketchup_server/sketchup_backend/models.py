@@ -1,4 +1,5 @@
 from django.db import models
+import django.utils.timezone as tz
 import datetime
 
 # Create your models here.
@@ -11,7 +12,7 @@ class Lobby(models.Model):
     count = models.IntegerField(default=0)
     word = models.CharField(max_length=100, default="null")
     first_drawer = models.CharField(max_length=100, default="")
-    creation_time = models.DateField(null=True, default=datetime.datetime.today())
+    creation_time = models.DateTimeField(null=True, auto_created=True)
 
 class Player(models.Model):
     def __str__(self):

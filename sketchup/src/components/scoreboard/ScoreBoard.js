@@ -1,5 +1,4 @@
 import React, {Component} from "react";
-
 import './ScoreBoard.css'
 
 export default class ScoreBoard extends Component {
@@ -10,7 +9,11 @@ export default class ScoreBoard extends Component {
     render(){
         if(!Array.isArray(this.props.score_list)) return("");
         let score_list_sorted = this.props.score_list;
-        score_list_sorted.sort(function(a,b){if(a.score > b.score) return -1; else return 1;});
+        score_list_sorted.sort(function(a,b){
+            if(a.score > b.score) return -1;
+            else if(a.score < b.score) return 1;
+            else return a.username.localeCompare(b.username);
+        });
         return(
             <div id="scoreboard-container">
                 <h1>{this.props.title === undefined ? "Scoreboard" : this.props.title}</h1>

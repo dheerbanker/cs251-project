@@ -1,4 +1,5 @@
 import {Component} from "react";
+import React from "react";
 
 import ScoreBoard from "../scoreboard/ScoreBoard";
 import Chat from "../chat/Chat";
@@ -22,19 +23,45 @@ class MainGame extends Component {
             lobby_code: lobby_code,
             cur_word: "_",
             scoreboard: [],
+            timer: 0,
+            creation_time:"",
 // might be problematic
 // PROBLEM
             drawer: "_"
         };
         
+        this.child = React.createRef();
         this.refreshGameState();
         
     }
 
     componentDidMount(){
-        setInterval(function(){
-            this.refreshGameState()
-        },10000)
+        setInterval(
+            this.refreshGameState
+        ,10000)
+
+        setInterval(
+            this.updateTime
+            ,1000
+        )
+
+    }
+
+
+    updateTime = () => {
+        if(this.state.timer < 0){
+            this.child.current.gameTimeOut();
+        }
+        if(this.state.creation_time != ""){
+            // console.debug("Updating time now");
+
+            let curr_time = new Date()
+            let intial_time = new Date(this.state.creation_time)
+            this.setState({
+                timer : 120-Math.floor((curr_time.getTime() - intial_time.getTime())/1000)
+            }) 
+            // console.log(intial_time)
+        }
     }
 
     refreshGameState = () => {
@@ -46,21 +73,24 @@ class MainGame extends Component {
                     let new_w = this.state.cur_word;
                     let new_sc = this.state.scoreboard;
                     let new_d = this.state.drawer;
+                    let new_time = this.state.creation_time;
                     if(data.hasOwnProperty("word")) new_w = data.word;
                     if(data.hasOwnProperty("scoreboard")){
                         new_sc = data.scoreboard;
                     }
                     if(data.hasOwnProperty("drawer")) new_d = data.drawer;
+                    if(data.hasOwnProperty("creation_time")) new_time = data.creation_time;
                     
                     this.setState({
                         cur_word: new_w,
                         scoreboard: new_sc,
                         drawer: new_d,
+                        creation_time: new_time,
                     });
 
-                    console.log("State successfully updated");
+                    // console.log("State successfully updated");
             })
-            .catch((error) => {console.log(error);});
+            .catch((error) => {console.error(error);});
         }, 2000);
     }
 
@@ -79,8 +109,24 @@ class MainGame extends Component {
     }
 
     requestStateRefresh = () => {
-        return fetch(API.REFRESH_GAME_STATE + `?code=${this.state.lobby_code}`)
-        .catch((error) => {console.error(`Failed to request game state refresh: ${error}`);});
+        
+        console.log(API.UPDATE_SCORE);
+        return fetch(API.UPDATE_SCORE, 
+            {
+                method:'POST',
+                body:JSON.stringify({
+                    update_player: this.state.username,
+                    score: Math.floor(100*Math.exp((this.state.timer-100)/120)),
+                })
+            }
+        )
+        .then((response) => {
+            // console.log(response);
+            return fetch(API.REFRESH_GAME_STATE + `?code=${this.state.lobby_code}`)
+            .catch((error) => {console.error(`Failed to request game state refresh: ${error}`);});
+        })
+        .catch((error) => {console.error(`Failed to update score: ${error}`)});
+        
     }
 
     dashedWord = (undashed_word) => {
@@ -95,10 +141,10 @@ class MainGame extends Component {
                         Lobby Code: {this.state.lobby_code}
                     </div>
                     <div className="col">
-                        Drawer: <b>{this.state.drawer}</b>
+                        Time: <b>{this.state.timer}</b>
                     </div>
                     <div className="col">
-                        Any more information required to be put up
+                        Drawer: <b>{this.state.drawer}</b>
                     </div>
                 </div>
                 <div className="w-100"></div>
@@ -117,7 +163,7 @@ class MainGame extends Component {
                     </div>
                 </div>
                 <div className="col-lg-3" id="game-chat-container">
-                    <Chat onRefreshGameState={this.refreshGameState} username={this.state.username} onCorrectGuess={this.requestStateRefresh} chatbox_disabled={this.state.drawer === this.state.username} correct_word={this.state.cur_word} />
+                    <Chat ref={this.child} onRefreshGameState={this.refreshGameState} username={this.state.username} onCorrectGuess={this.requestStateRefresh} chatbox_disabled={this.state.drawer === this.state.username} correct_word={this.state.cur_word} />
                 </div>
             </div>
         )

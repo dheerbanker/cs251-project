@@ -11,7 +11,7 @@ class FinalScore extends Component{
 
         var def_sc = [];
         if(this.props.score_list !== undefined) def_sc = this.props.score_list;
-        else if(this.props.state.score_list !== undefined) def_sc = this.props.score_list;
+        else if(this.props.location.state !== undefined && this.props.location.state.score_list !== undefined) def_sc = this.props.location.state.score_list;
 
         this.state = {
             score_list: def_sc

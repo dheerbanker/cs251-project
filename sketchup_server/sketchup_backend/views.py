@@ -78,17 +78,19 @@ class GamePlay(View):
         lobby = Lobby.objects.get(code=req_code) 
         playerList = [player.player_name for player in Player.objects.filter(code=req_code)]
         lobby.count += 1 
-        if(lobby.count < len(playerList)):
-            s_playerList = sorted(playerList)
-            if(s_playerList[-1] == lobby.curr_drawer):
-                curr_drawer = s_playerList[0]
-            else:
-                curr_drawer = s_playerList[s_playerList.index(lobby.curr_drawer)+1]
-            # curr_drawer =  playerList[lobby.count].player_name
-            lobby.curr_drawer = curr_drawer 
+        s_playerList = sorted(playerList)
+        curr_drawer = s_playerList[(s_playerList.index(lobby.curr_drawer)+1)%len(s_playerList)]
+        # if(s_playerList[-1] == lobby.curr_drawer):
+        #     curr_drawer = s_playerList[0]
+        # else:
+        #     curr_drawer = s_playerList[s_playerList.index(lobby.curr_drawer)+1]
+        # curr_drawer =  playerList[lobby.count].player_name
+        lobby.curr_drawer = curr_drawer 
         prev_word = lobby.word
         while(lobby.word == prev_word):
             lobby.word = random.choice(game_objects)
+        
+        lobby.creation_time = datetime.datetime.now()
 
         lobby.save()
         
@@ -129,10 +131,10 @@ class GameState(View):
 
         # print(lobby.count)
         # print(lobby.player_set.all())
-        if(lobby.count >= len(lobby.player_set.all())):
+        if(lobby.count >= 3*len(lobby.player_set.all())):
             curr_drawer = ""
             winner = sorted(playerList, key=lambda t:t.score)[-1]
-            Leaderboard.objects.create(player_name=winner.player_name, score=winner.score)
+            # Leaderboard.objects.create(player_name=winner.player_name, score=winner.score)
 
         msg = json.dumps({
             # "word": random.choices(game_objects),
@@ -140,15 +142,16 @@ class GameState(View):
             "scoreboard": [{"username": t.player_name,"score": t.score} for t in playerList],
             "drawer": curr_drawer,
             "creation_time": lobby.creation_time
-        })
+        }, default=str)
 
-        if(lobby.count >= len(lobby.player_set.all())):
-            lobby.delete()
+        # if(lobby.count >= 3*len(lobby.player_set.all())):
+        #     lobby.delete()
 
         return HttpResponse(msg, status = 200)
 
 class LeaderboardView(View):
     def get(self, request):
-        res = [{"player_name": entry.player_name, "score": entry.score} for entry in Leaderboard.objects.all().order_by('-score')]
+        # res = [{"username": entry.player_name, "score": entry.score} for entry in Leaderboard.objects.all().order_by('-score')[:15]]
+        res = [{"username": entry.player_name, "score": entry.score} for entry in Player.objects.all().order_by('-score')[:15]]
 
         return HttpResponse(json.dumps(res[:15]), status=200)

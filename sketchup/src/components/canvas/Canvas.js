@@ -44,7 +44,7 @@ export default class Canvas extends React.Component{
       this.loadCanvasContext();
       this.context.clearRect(0, 0, this.canvasRef.current.width, this.canvasRef.current.height);
     }
-    this.server_socket.onmessage = this.drawAllowed ? (event)=>{} : (event) => {console.log(event);var point_data = JSON.parse(event.data);this.showPoints(point_data.point.x, point_data.point.y,point_data.newLine);}
+    this.server_socket.onmessage = this.drawAllowed ? (event)=>{} : (event) => {var point_data = JSON.parse(event.data);this.showPoints(point_data.point.x, point_data.point.y,point_data.newLine);}
   }
 
 

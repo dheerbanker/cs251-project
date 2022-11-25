@@ -94,6 +94,16 @@ export default class Chat extends Component {
     }
   };
 
+  gameTimeOut = () => {
+    if(this.state.username = this.state.drawer){
+      this.props.onCorrectGuess()
+      .then((val) => {
+        this.chat_server.send(`${Chat.CORRECT_GUESSED_IDENTIFIER}${this.props.correct_word} is the correct word!`);
+        this.chat_server.send(Chat.GAME_END_IDENTIFIER);
+      });
+    }
+  }
+
   render() {
     return (
       <div className="chat-zone">
