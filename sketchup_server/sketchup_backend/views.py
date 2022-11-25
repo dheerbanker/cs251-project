@@ -55,7 +55,8 @@ class LoginView(View):
     # login with a new userid
     # params: player_name 
     def post(self, request):
-        username = request.POST['player_name']
+        req_data = json.loads(request.body)
+        username = req_data['player_name'] 
         try:
             Player.objects.get(player_name = username)
             return HttpResponse(json.dumps(dict(error="Username already exists")),status=403)

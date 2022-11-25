@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import { useNavigate } from "react-router-dom";
 
-import {API} from '../../utils/Endpoints';
+import API from '../../utils/Endpoints';
 
 import './Home.css';
 
@@ -29,7 +29,7 @@ class Home extends Component {
         });
     }
 
-    onUsernameSubmitted(){
+    onUsernameSubmitted = () => {
         if(this.state.username === ""){
             this.showWarning("Can't have an empty username");
             return;
@@ -43,15 +43,12 @@ class Home extends Component {
         return username_submission;
     }
 
-    async onCreateLobbyClicked(event){
+    onCreateLobbyClicked = async (event) => {
         // TODO: Add code to handle the clicking of creation of a new lobby
         var username_status = await this.onUsernameSubmitted();
         if(username_status === undefined) return;
         if(username_status === 200){
-            var lobby_creation_response = await fetch(API.CREATE_LOBBY, {
-                    method: 'GET',
-                    body: JSON.stringify({player_name: this.state.username}),
-            })
+            var lobby_creation_response = await fetch(API.CREATE_LOBBY + `?player_name=${this.state.username}`) 
             .then((response) => response.json())
             .catch((error) => {console.error(error);});
 
@@ -83,7 +80,7 @@ class Home extends Component {
         });
     }
 
-    async onJoinLobbyClicked(event) {
+    onJoinLobbyClicked = async (event) =>  {
         if(this.state.show_lobby_code_input){
             // Add code to handle lobby joining request
             var username_status = await this.onUsernameSubmitted();
@@ -128,9 +125,9 @@ class Home extends Component {
         }
     }
 
-    joinGame(name, code){
+    joinGame = (name, code) => {
         // var navigate = useNavigate();
-        this.props.navigate("/game", { username: name, lobby_code: code});
+        this.props.navigate("/game", {state: { username: name, lobby_code: code}});
         return;
     }
 

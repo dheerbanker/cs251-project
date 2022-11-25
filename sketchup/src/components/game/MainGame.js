@@ -13,7 +13,7 @@ class MainGame extends Component {
         super(props);
     
         // var {username, lobby_code} = useLocation();
-        var {username, lobby_code} = this.props.location;
+        var {username, lobby_code} = this.props.location.state;
         if(username === undefined || lobby_code === undefined){this.state={error:"Received execution-critical information as null"};return;}
 
         this.state = {
