@@ -8,11 +8,12 @@ import './MainGame.css'
 import {API} from '../../utils/Endpoints';
 import { useLocation } from "react-router-dom";
 
-export default class MainGame extends Component {
+class MainGame extends Component {
     constructor(props){
         super(props);
     
-        var {username, lobby_code} = useLocation();
+        // var {username, lobby_code} = useLocation();
+        var {username, lobby_code} = this.props.location;
         if(username === undefined || lobby_code === undefined){this.state={error:"Received execution-critical information as null"};return;}
 
         this.state = {
@@ -55,4 +56,10 @@ export default class MainGame extends Component {
             </div>
         )
     }
+}
+
+export default function(props){
+    const loc = useLocation();
+
+    return(<MainGame {...props} location={loc}/>)
 }

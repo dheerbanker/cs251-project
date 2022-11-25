@@ -18,17 +18,16 @@ export default class Chat extends Component {
       ],
       chatbox_disabled: (this.props.chatbox_disabled!==undefined) ? this.props.chatbox_disabled : false,
     };
-
+  }
+  
+  componentDidMount(){
     this.username = `user${Math.floor(Math.random()*100000)}`;
     this.lobby = "room";
     if(this.props.username !== undefined) this.username = this.props.username;
     if(this.props.lobby !== undefined) this.lobby = this.props.lobby;
-
-    this.chat_server = new WebSocket(`ws://127.0.0.1:8000/chat-connect/${this.lobby}/${this.username}`);
+    
     // this.chat_server = new WebSocket('ws://127.0.0.1:8000/chat-connect/room/' + this.username)
-  }
-
-  componentDidMount(){
+    this.chat_server = new WebSocket(`ws://127.0.0.1:8000/chat-connect/${this.lobby}/${this.username}`);
     this.chat_server.onopen = () => {
     }
 
@@ -86,6 +85,3 @@ export default class Chat extends Component {
     );
   }
 }
-
-// const rootElement = document.getElementById("root");
-// ReactDOM.render(<App />, rootElement);

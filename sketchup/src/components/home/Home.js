@@ -1,9 +1,11 @@
 import React, {Component} from "react";
 import { useNavigate } from "react-router-dom";
 
+import {API} from '../../utils/Endpoints';
+
 import './Home.css';
 
-export default class Home extends Component {
+class Home extends Component {
     constructor(props){
         super(props);
 
@@ -11,7 +13,8 @@ export default class Home extends Component {
             username: "",
             warning_message: "",
             lobby_code: "",
-            show_lobby_code_input: false
+            show_lobby_code_input: false,
+            join_btn_text: "Join using code",
         }
     }
 
@@ -20,12 +23,12 @@ export default class Home extends Component {
             lobby_code: event.target.value
         })
     }
-
     onUsernameChanged = event => {
         this.setState({
             username: event.target.value
         });
     }
+
     onUsernameSubmitted(){
         if(this.state.username === ""){
             this.showWarning("Can't have an empty username");
@@ -36,37 +39,41 @@ export default class Home extends Component {
             method: 'POST',
             body: JSON.stringify({player_name: this.state.username}),
         })
-        .then((response) => response.status, (error) => {console.error(error);});
+        .then((response) => response.status, (error) => {console.error(error);this.showWarning("Failed to login with the current username, please try again.")});
         return username_submission;
     }
 
     async onCreateLobbyClicked(event){
         // TODO: Add code to handle the clicking of creation of a new lobby
-        username_status = await this.onUsernameSubmitted();
+        var username_status = await this.onUsernameSubmitted();
+        if(username_status === undefined) return;
         if(username_status === 200){
-            lobby_creation_response = await fetch(API.CREATE_LOBBY, {
+            var lobby_creation_response = await fetch(API.CREATE_LOBBY, {
                     method: 'GET',
                     body: JSON.stringify({player_name: this.state.username}),
-            }).then((response) => response.json());
+            })
+            .then((response) => response.json())
+            .catch((error) => {console.error(error);});
+
+            if(lobby_creation_response === undefined){
+                this.showWarning("Lobby creation failed, please try again.");return;
+            }
 
             if(lobby_creation_response.hasOwnProperty("lobby_code")){
                 //TODO: Add code to launch a game instance with the respective lobby code and username
-                var navigate = useNavigate();
-                navigate("/game", { username: this.state.username, lobby_code: lobby_creation_response.lobby_code});
-                // alert(`Would now proceed to the game screen, lobbycode:${lobby_creation_response.lobby_code};username:${this.state.username}`);
+                alert(`Would now proceed to the game screen, lobbycode:${lobby_creation_response.lobby_code};username:${this.state.username}`);
+
+                this.joinGame(this.state.username, lobby_creation_response.lobby_code);
+                // var navigate = useNavigate();
+                // navigate("/game", { username: this.state.username, lobby_code: lobby_creation_response.lobby_code});
+                return;
             }else{
-                this.setState({
-                    warning_message: "Unknown error occurred while attempting lobby creation, please try again",
-                });
+                this.showWarning("Unknown error occurred while attempting lobby creation, please try again.");return;
             }
         }else if(username_status === 403){
-            this.setState({
-                warning_message: `Name ${this.state.username} is already taken, please choose another player name`
-            });
+            this.showWarning(`Name ${this.state.username} is already taken, please choose another player name`);return;
         }else{
-            this.setState({
-                warning_message: "Unknown error occurred while attempting login, please try again"
-            })
+            this.showWarning("Unknown error occurred while attempting creation, please try again");return;
         }
     }
 
@@ -76,14 +83,55 @@ export default class Home extends Component {
         });
     }
 
-    onJoinLobbyClicked = event => {
+    async onJoinLobbyClicked(event) {
         if(this.state.show_lobby_code_input){
             // Add code to handle lobby joining request
+            var username_status = await this.onUsernameSubmitted();
+            if(username_status === undefined) return;
+            if(username_status === 200){
+                var lobby_join_response = await fetch(API.CREATE_LOBBY, {
+                        method: 'POST',
+                        body: JSON.stringify({player_name: this.state.username, code: this.state.lobby_code}),
+                })
+                .then((response) => response.status)
+                .catch((error) => {console.error(error);});
+
+                if(lobby_join_response === undefined){
+                    this.showWarning("Lobby creation failed, please try again.");return;
+                }
+
+                if(lobby_join_response === 200){
+                    //TODO: Add code to launch a game instance with the respective lobby code and username
+                    alert(`Would now proceed to the game screen, lobbycode:${this.state.lobby_code};username:${this.state.username}`);
+
+                    this.joinGame(this.state.username, this.state.lobby_code);
+                    // var navigate = useNavigate();
+                    // navigate("/game", { username: this.state.username, lobby_code: lobby_creation_response.lobby_code});
+                    return;
+                }else if(lobby_join_response === 400) { //TODO: Change this response code to 400, the correct one for this case
+                    this.showWarning("Please provide a valid lobby code.");return;
+                }else if(lobby_join_response === 403){
+                    this.showWarning(`Lobby with code ${this.state.lobby_code} does not exist. Please ensure you are using the correct code.`);return;
+                }else{
+                    this.showWarning("Unknown error occurred while attempting lobby creation, please try again.");return;
+                }
+            }else if(username_status === 403){
+                this.showWarning(`Name ${this.state.username} is already taken, please choose another player name`);return;
+            }else{
+                this.showWarning("Unknown error occurred while attempting joining, please try again");return;
+            }
         }else{
             this.setState({
-                show_lobby_code_input: !this.state.show_lobby_code_input
+                show_lobby_code_input: !this.state.show_lobby_code_input,
+                join_btn_text: "Join!",
             });
         }
+    }
+
+    joinGame(name, code){
+        // var navigate = useNavigate();
+        this.props.navigate("/game", { username: name, lobby_code: code});
+        return;
     }
 
     render(){
@@ -95,7 +143,7 @@ export default class Home extends Component {
                     <br/>
                     <button className="btn btn-primary" id="create-lobby-btn" onClick={this.onCreateLobbyClicked}>Create Lobby</button>
                     <br/>
-                    <button className="btn btn-primary" id="join-lobby-btn" onClick={this.onJoinLobbyClicked}>Join Lobby</button>
+                    <button className="btn btn-primary" id="join-lobby-btn" onClick={this.onJoinLobbyClicked}>{this.state.join_btn_text}</button>
                     <br/>
                     {this.state.show_lobby_code_input && <input type="text" id="lobby-code-in" placeholder="Lobby Code" value={this.state.lobby_code} onChange={this.onLobbyCodeChanged} />}
                 </div>
@@ -104,4 +152,10 @@ export default class Home extends Component {
             </div>
         )
     }
+}
+
+export default function(props){
+    const nav = useNavigate();
+
+    return(<Home {...props} navigate={nav}/>);
 }

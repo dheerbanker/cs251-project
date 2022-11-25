@@ -36,7 +36,7 @@ class LobbyView(View):
 
         # passed param: code , player_name
         if(not self.lobby_name_constraint(request.POST['code'])):
-            return HttpResponse("provide a valid lobby code", status=403)
+            return HttpResponse("provide a valid lobby code", status=400)
 
         req_code = request.POST['code']
         try:
