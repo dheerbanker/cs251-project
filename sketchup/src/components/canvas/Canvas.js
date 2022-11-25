@@ -23,6 +23,12 @@ export default class Canvas extends React.Component{
     // server_socket = new WebSocket(socket_url + "/draw/room/")
     this.server_socket = new WebSocket(socket_url + `/draw/${this.lobby_code}`);
 
+
+    this.canvasRef.current.style.width = "100%"
+    this.canvasRef.current.style.height = "100%"
+    this.canvasRef.current.height = this.canvasRef.current.offsetHeight
+    this.canvasRef.current.width = this.canvasRef.current.offsetWidth
+
     this.loadCanvasContext();
     this.context.lineCap = "round";
     this.context.strokeStyle = "black";
@@ -34,8 +40,8 @@ export default class Canvas extends React.Component{
     //   // console.log("socket connected")
     // }
     this.server_socket.onmessage = (event) => {
-      console.log(event)
-      point_data = JSON.parse(event.data);
+      // console.log(event)
+      let point_data = JSON.parse(event.data);
       this.showPoints(point_data.point.x, point_data.point.y,point_data.newLine)
     }
   }
@@ -112,6 +118,13 @@ export default class Canvas extends React.Component{
   render(){
     if(this.props.drawAllowed){
       return(
+        <div style={{
+          "width" : "100%",
+          "height" : "100%",
+          "position" : "relative"
+        }
+        }>
+
         <canvas
         // width={this.props.dim.width}
         // height={this.props.dim.height}
@@ -120,16 +133,24 @@ export default class Canvas extends React.Component{
         onMouseMove={this.draw}
         style={{border: "1px solid"}}
         ref={this.canvasRef} />
+        </div>
       )
     }
 
     else{
       return(
+        <div style={{
+          "width" : "100%",
+          "height" : "100%",
+          "position" : "relative"
+        }
+        }>
         <canvas
         // width={this.props.dim.width}
         // height={this.props.dim.height}
         style={{border: "1px solid"}}
         ref={this.canvasRef} />
+        </div>
       )
     }
 

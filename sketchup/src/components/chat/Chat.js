@@ -12,17 +12,27 @@ export default class Chat extends Component {
     super(props);
     this.state = {
       messages: [
-        { username: "moriarty", message: "Game?" },
-        { username: "sherlock", message: "Game." },
-        { username: "watson", message: "No, no, just hold on a second" }
+        // { username: "moriarty", message: "Game?" },
+        // { username: "sherlock", message: "Game." },
+        // { username: "watson", message: "No, no, just hold on a second" }
       ],
       chatbox_disabled: (this.props.chatbox_disabled!==undefined) ? this.props.chatbox_disabled : false,
     };
+
+    console.log(`chatbox_disabled: ${this.props.chatbox_disabled}`);
+  }
+
+  componentDidUpdate(prevProps, prevState){
+    if(this.props.chatbox_disabled !== undefined && this.props.chatbox_disabled != this.state.chatbox_disabled){
+      this.setState({
+        chatbox_disabled: this.props.chatbox_disabled
+      });
+    }
   }
   
   componentDidMount(){
-    this.username = `user${Math.floor(Math.random()*100000)}`;
-    this.lobby = "room";
+    // this.username = `user${Math.floor(Math.random()*100000)}`;
+    // this.lobby = "room";
     if(this.props.username !== undefined) this.username = this.props.username;
     if(this.props.lobby !== undefined) this.lobby = this.props.lobby;
     
@@ -37,6 +47,13 @@ export default class Chat extends Component {
       if(new_msg.message.startsWith(Chat.GAME_END_IDENTIFIER)){
         this.setState({chatbox_disabled: true});
         if(this.props.onRefreshGameState !== undefined) this.props.onRefreshGameState();
+        return;
+      }
+      if(new_msg.message.startsWith(Chat.CORRECT_GUESSED_IDENTIFIER)){
+        let updatedMessages = [...this.state.messages, JSON.parse(event.data)]
+        this.setState({
+          messages: updatedMessages
+        });
         return;
       }
       if(new_msg.username === this.username) return;
@@ -56,13 +73,17 @@ export default class Chat extends Component {
       });
 
       if(this.props.correct_word !== undefined && newMessage.message === this.props.correct_word){
-        if(this.props.onCorrectGuess !== undefined) this.props.onCorrectGuess();
+        if(this.props.onCorrectGuess !== undefined) 
+          this.props.onCorrectGuess()
+          .then((val) => {
+            this.chat_server.send(`${Chat.CORRECT_GUESSED_IDENTIFIER}${this.props.username} guessed the correct word!`);
+            this.chat_server.send(Chat.GAME_END_IDENTIFIER);
+          });
         /*TODO: Add code here to:
         - Handle score calculation
         - Request server to update game state, points, etc.
         */
-        this.chat_server.send(`${Chat.CORRECT_GUESSED_IDENTIFIER}${this.props.username} guessed the correct word!`);
-        this.chat_server.send(Chat.GAME_END_IDENTIFIER);
+       // call get on loadgame
         return;
       }
       else{
@@ -78,9 +99,9 @@ export default class Chat extends Component {
       <div className="chat-zone">
         <h1>Chat</h1>
         {/* send stored messages as props to chat window */}
-        <ChatWindow messagesList={this.state.messages} username={this.username} correct_guess_identifier={Chat.CORRECT_GUESSED_IDENTIFIER} />
+        <ChatWindow messagesList={this.state.messages} username={this.props.username} correct_guess_identifier={Chat.CORRECT_GUESSED_IDENTIFIER} />
         {/* send submitted props to chat composer */}
-        <ChatComposer submitted={this.submitted} username={this.username} disabled={this.state.chatbox_disabled} />
+        <ChatComposer submitted={this.submitted} username={this.props.username} disabled={this.state.chatbox_disabled} />
       </div>
     );
   }

@@ -5,7 +5,7 @@ import Chat from "../chat/Chat";
 import Canvas from "../canvas/Canvas";
 
 import './MainGame.css'
-import {API} from '../../utils/Endpoints';
+import API from '../../utils/Endpoints';
 import { useLocation } from "react-router-dom";
 
 class MainGame extends Component {
@@ -23,6 +23,8 @@ class MainGame extends Component {
             scoreboard: [],
             drawer: ""
         };
+        
+        this.refreshGameState();
     }
 
     refreshGameState = () => {
@@ -36,22 +38,29 @@ class MainGame extends Component {
             .then((response) => response.json())
             .then((data) => {
                     if(!(data.hasOwnProperty("word") || data.hasOwnProperty("scoreboard") || data.hasOwnProperty("drawer"))) console.error("Found no relevant data in refresh game API call");
-                    new_w = data.word ? data.word : this.state.cur_word;
-                    new_sc = data.scoreboard ? data.scoreboard : this.state.scoreboard;
-                    new_d = data.drawer ? data.drawer : this.state.drawer;
-
+                    let new_w = this.state.cur_word;
+                    let new_sc = this.state.scoreboard;
+                    let new_d = this.state.drawer;
+                    if(data.hasOwnProperty("word")) new_w = data.word;
+                    if(data.hasOwnProperty("scoreboard")){
+                        new_sc = data.scoreboard;
+                    }
+                    if(data.hasOwnProperty("drawer")) new_d = data.drawer;
+                    
                     this.setState({
                         cur_word: new_w,
                         scoreboard: new_sc,
                         drawer: new_d,
                     });
+
+                    console.log("State successfully updated");
             })
             .catch((error) => {console.log(error);});
         }, 2000);
     }
 
     requestStateRefresh = () => {
-        fetch(API.REFRESH_GAME_STATE + `?code=${this.state.lobby_code}`)
+        return fetch(API.REFRESH_GAME_STATE + `?code=${this.state.lobby_code}`)
         .catch((error) => {console.error(`Failed to request game state refresh: ${error}`);});
     }
 
@@ -63,7 +72,7 @@ class MainGame extends Component {
                         Lobby Code: {this.state.lobby_code}
                     </div>
                     <div className="col">
-                        Playing Game
+                        Drawing: {this.state.drawer}
                     </div>
                     <div className="col">
                         Any more information required to be put up
@@ -76,16 +85,16 @@ class MainGame extends Component {
                 <div className="col-lg-7" id="game-draw-container">
                     <div className="row">
                         <div className="col" id="game-word-container">
-                            {this.state.cur_word}
+                            Word: {this.state.cur_word}
                         </div>
                         <div className="w-100"></div>
                         <div className="col" id="game-canvas-container">
-                            <Canvas dim={{height: "100%", width: "100%"}}  drawAllowed={this.state.drawer === this.state.username} lobby_code={this.state.lobby_code} />
+                            <Canvas dim={{height: 'auto', width: 'auto'}}  drawAllowed={this.state.drawer === this.state.username} lobby_code={this.state.lobby_code} />
                         </div>
                     </div>
                 </div>
                 <div className="col-lg-3" id="game-chat-container">
-                    <Chat chatbox_disabled={this.state.drawer === this.username} />
+                    <Chat onRefreshGameState={this.refreshGameState} username={this.state.username} onCorrectGuess={this.requestStateRefresh} chatbox_disabled={this.state.drawer === this.state.username} correct_word={this.state.cur_word} />
                 </div>
             </div>
         )

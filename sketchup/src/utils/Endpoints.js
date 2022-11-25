@@ -6,9 +6,6 @@ const get_game_state_ep = '/getgamestate/';
 const refresh_game_state_ep = '/loadgame/'
 
 export default class API {
-    static get GAME_STATE(){
-        return SERVER_URL + game_state_ep;
-    }
     static get CREATE_LOBBY(){
         return SERVER_URL + create_lobby_ep;
     }

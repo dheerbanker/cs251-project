@@ -5,23 +5,19 @@ import './ScoreBoard.css'
 export default class ScoreBoard extends Component {
     constructor(props){
         super(props);
-
-        //TODO: initialise state here based on all the usernames present in some variable in props
-
-        this.state = {
-            // score_list: [
-            //     {username: 'sherlock', score: 200},
-            //     {username: 'moriarty', score: 100},
-            //     {username: 'watson', score: 50},
-            //     {username: 'mycroft', score: 25},
-            // ]
-            score_list: this.props.score_list,
-        }
     }
 
+    // componentDidUpdate(prevProps, prevState){
+    //     if(this.props.score_lis){
+    //         this.setState({
+    //             score_list: this.props.score_list
+    //         });
+    //     }
+    // }
+
     render(){
-        if(!Array.isArray(this.state.score_list)) return("");
-        let score_list_sorted = this.state.score_list;
+        if(!Array.isArray(this.props.score_list)) return("");
+        let score_list_sorted = this.props.score_list;
         score_list_sorted.sort(function(a,b){if(a.score > b.score) return -1; else return 1;});
         return(
             <div id="scoreboard-container">
