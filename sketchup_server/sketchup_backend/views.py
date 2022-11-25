@@ -26,7 +26,8 @@ class LobbyView(View):
         req_player=Player.objects.get(player_name = request.GET['player_name'])
         req_player.code = Lobby.objects.get(code = lobby_name)
         req_player.save()
-        return HttpResponse(f"lobby {lobby_name} creation successful",status=200)
+        # return HttpResponse(f"{"": {lobby_name}}",status=200)
+        return HttpResponse(json.dumps(dict(lobby_code=lobby_name)),status=200)
 
 
     def post(self, request):
@@ -36,7 +37,7 @@ class LobbyView(View):
 
         # passed param: code , player_name
         if(not self.lobby_name_constraint(request.POST['code'])):
-            return HttpResponse("provide a valid lobby code", status=400)
+            return HttpResponse(json.dumps(dict(error="Please provide a valid lobby code")), status=400)
 
         req_code = request.POST['code']
         try:
@@ -45,9 +46,9 @@ class LobbyView(View):
             player.code = lobby 
             player.save()
             # Player.objects.get(player_name=request.POST['player_name']).save()
-            return HttpResponse("joined the lobby",status=200)
+            return HttpResponse(json.dumps(dict(message="Lobby joining successful")),status=200)
         except Lobby.DoesNotExist as e:
-            return HttpResponse("Lobby does not exist", status=403)
+            return HttpResponse(json.dumps(dict(error="Lobby does not exist")), status=403)
 
 
 class LoginView(View):
@@ -57,10 +58,10 @@ class LoginView(View):
         username = request.POST['player_name']
         try:
             Player.objects.get(player_name = username)
-            return HttpResponse("Username already exists",status=403)
+            return HttpResponse(json.dumps(dict(error="Username already exists")),status=403)
         except Player.DoesNotExist as e:
             Player.objects.create(player_name = username)
-            return HttpResponse("Acknowledge", status=200)
+            return HttpResponse(json.dumps(dict(message="Acknowledge")), status=200)
 
 class GamePlay(View):
     def get(self,request):
@@ -75,7 +76,8 @@ class GamePlay(View):
         # return HttpResponse(curr_drawer,status=200)
 
     def post(self, request):
-        req_code = request.POST['code']
+        req_data = json.loads(request.body)
+        req_code = req_data.get('code', None)
         # format:
         # code : lsdfjl
         # players : [{

@@ -97,7 +97,7 @@ class Home extends Component {
                 .catch((error) => {console.error(error);});
 
                 if(lobby_join_response === undefined){
-                    this.showWarning("Lobby creation failed, please try again.");return;
+                    this.showWarning("Lobby join failed, please try again.");return;
                 }
 
                 if(lobby_join_response === 200){
