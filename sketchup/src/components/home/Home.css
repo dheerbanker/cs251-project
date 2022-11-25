@@ -1,9 +1,16 @@
+body{
+    background-color: #C5CAE9;
+}
 #home-container{
     width: 100%;
 }
 #game-heading{
     margin: 120px auto;
     font-size: 120px;
+
+    /* font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; */
+
+    /* color: #9C27B0; */
 }
 
 #play-form {
@@ -14,21 +21,28 @@
     width: 80%;
     margin: auto;
     margin-bottom: 24px;
+
+    background-color: white;
 }
 #create-lobby-btn{
     width: 20%;
     margin: auto;
     margin-bottom: 24px;
+
+    color: white;
 }
 #join-lobby-btn{
     width: 20%;
     margin: auto;
     margin-bottom: 24px;
+    color: white;
 }
 #lobby-code-in{
     width: 30%;
     margin: auto;
     margin-bottom: 24px;
+
+    background-color: white;
 }
 #warning-msg-p{
     grid-column-start: 1;

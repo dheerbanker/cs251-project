@@ -83,6 +83,10 @@ class MainGame extends Component {
         .catch((error) => {console.error(`Failed to request game state refresh: ${error}`);});
     }
 
+    dashedWord = (undashed_word) => {
+        return `_${Array(undashed_word.length).join(" _")}`;
+    }
+
     render(){
         return(
             <div className="row" id="main-game-container">
@@ -91,7 +95,7 @@ class MainGame extends Component {
                         Lobby Code: {this.state.lobby_code}
                     </div>
                     <div className="col">
-                        Drawing: {this.state.drawer}
+                        Drawer: <b>{this.state.drawer}</b>
                     </div>
                     <div className="col">
                         Any more information required to be put up
@@ -104,7 +108,7 @@ class MainGame extends Component {
                 <div className="col-lg-7" id="game-draw-container">
                     <div className="row">
                         <div className="col" id="game-word-container">
-                            Word: {this.state.cur_word}
+                            {this.state.username===this.state.drawer ? this.state.cur_word : this.dashedWord(this.state.cur_word)}
                         </div>
                         <div className="w-100"></div>
                         <div className="col" id="game-canvas-container">

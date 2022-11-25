@@ -36,14 +36,7 @@ export default class Canvas extends React.Component{
     this.context2.lineCap = "round";
     this.context2.strokeStyle = "black";
     this.context2.lineWidth = 1;
-    // this.server_socket.onopen = () => {
-    //   // console.log("socket connected")
-    // }
-    this.server_socket.onmessage = (event) => {
-      // console.log(event)
-      let point_data = JSON.parse(event.data);
-      this.showPoints(point_data.point.x, point_data.point.y,point_data.newLine)
-    }
+    this.server_socket.onmessage = this.drawAllowed ? (event)=>{} : (event) => {console.log(event);var point_data = JSON.parse(event.data);this.showPoints(point_data.point.x, point_data.point.y,point_data.newLine);}
   }
 
   componentDidUpdate = (prevProps, prevState) => {
@@ -51,6 +44,7 @@ export default class Canvas extends React.Component{
       this.loadCanvasContext();
       this.context.clearRect(0, 0, this.canvasRef.current.width, this.canvasRef.current.height);
     }
+    this.server_socket.onmessage = this.drawAllowed ? (event)=>{} : (event) => {console.log(event);var point_data = JSON.parse(event.data);this.showPoints(point_data.point.x, point_data.point.y,point_data.newLine);}
   }
 
 

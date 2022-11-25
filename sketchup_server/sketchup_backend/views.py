@@ -3,11 +3,12 @@ import json
 import random
 from django.http import HttpResponse
 from django.views import View
-from .models import Player, Lobby
+from .models import Player, Lobby, Leaderboard
 import re
 import string
+import datetime
 
-game_objects = ["hat", "rat", "cat", "lauda", "chut"]
+game_objects = ["hat", "rat", "cat", "chest", "tornado", "apple", "waterfall", "superman", "tooth", "sunflower", "keyboard", "island", "octopus", "church", "tongue", "snowflake", "fish", "hospital", "smile", "skull", "flower", "tree", "skeleton"]
 class LobbyView(View):
     # creates a new lobby
     # params required: player_name
@@ -29,6 +30,7 @@ class LobbyView(View):
         newLobby.curr_drawer = req_player.player_name
         newLobby.first_drawer = req_player.player_name
         newLobby.word = random.choice(game_objects)
+        newLobby.creation_time = datetime.datetime.now()
         newLobby.save()
         req_player.save()
         # return HttpResponse(f"{"": {lobby_name}}",status=200)
@@ -129,14 +131,24 @@ class GameState(View):
         # print(lobby.player_set.all())
         if(lobby.count >= len(lobby.player_set.all())):
             curr_drawer = ""
+            winner = sorted(playerList, key=lambda t:t.score)[-1]
+            Leaderboard.objects.create(player_name=winner.player_name, score=winner.score)
 
         msg = json.dumps({
             # "word": random.choices(game_objects),
             "word": lobby.word, 
             "scoreboard": [{"username": t.player_name,"score": t.score} for t in playerList],
-            "drawer": curr_drawer
-
+            "drawer": curr_drawer,
+            "creation_time": lobby.creation_time
         })
+
+        if(lobby.count >= len(lobby.player_set.all())):
+            lobby.delete()
 
         return HttpResponse(msg, status = 200)
 
+class LeaderboardView(View):
+    def get(self, request):
+        res = [{"player_name": entry.player_name, "score": entry.score} for entry in Leaderboard.objects.all().order_by('-score')]
+
+        return HttpResponse(json.dumps(res), status=200)

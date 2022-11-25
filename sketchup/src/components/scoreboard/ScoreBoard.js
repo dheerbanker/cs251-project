@@ -50,8 +50,8 @@ export default class ScoreBoard extends Component {
                             </div>
                         </div>
                     ))
-                } 
-                {score_list_sorted.length === 0 && <p>Waiting for players to join ...</p>}
+                }
+                {score_list_sorted.length === 0 && <p>No players yet...</p>}
             </div>
         )
     }

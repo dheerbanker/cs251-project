@@ -1,5 +1,4 @@
 const SERVER_URL = 'http://127.0.0.1:8000';
-const game_state_ep = '/';
 const create_lobby_ep = '/lobby/';
 const choose_username_ep = '/login/';
 const get_game_state_ep = '/getgamestate/';
