@@ -3,10 +3,11 @@ import json
 import random
 from django.http import HttpResponse
 from django.views import View
-from .models import Player, Lobby
+from .models import Player, Lobby, Leaderboard
 import re
 import string
 
+game_objects = ["hat", "rat", "cat", "lauda", "chut"]
 class LobbyView(View):
     # creates a new lobby
     # params required: player_name
@@ -67,31 +68,54 @@ class LoginView(View):
 class GamePlay(View):
     def get(self,request):
         req_code = request.GET['code']
-        playerList = Player.objects.filter(code=req_code)
-        curr_drawer =  playerList[random.randint(0,len(playerList)-1)].player_name
         lobby = Lobby.objects.get(code=req_code) 
-        lobby.curr_drawer = curr_drawer 
+        playerList = Player.objects.filter(code=req_code)
+        if(lobby.count < len(playerList)):
+            curr_drawer =  playerList[lobby.count].player_name
+            lobby.curr_drawer = curr_drawer 
+        lobby.count += 1 
         lobby.save()
-
-        # player_score = [
-        # return HttpResponse(curr_drawer,status=200)
+        
+        msg = json.loads({
+            "error" : "no error"
+        })
+        return HttpResponse(msg,status=200)
 
     def post(self, request):
         req_data = json.loads(request.body)
-        req_code = req_data.get('code', None)
-        # format:
-        # code : lsdfjl
-        # players : [{
-        #    player1 : 23
-        #    player2 : 2342
-        #    player3 : 0
-        # }]
+        lb_player = Leaderboard.objects.get(user = Player.objects.get(player_name = req_data['update_player']))
+        lb_player.score += req_data['score']
+        lb_player.save()
+        # format
+        # update_player: player1
+        # score : 234
+        msg = json.loads({
+            "player_name": lb_player.user.player_name,
+            "score" : lb_player.score
+        })
 
+        return HttpResponse(msg, status=200)
 
-        for k in request.POST['players']:
-            print(k)
-        # print(request.POST['players'])
-        # print(jsonData) 
-        return HttpResponse("testing")
+# word , scoreboard , drawer
+class GameState(View):
+    def get(self, request):
 
+    
+        req_code = request.GET['code']
+        lobby = Lobby.objects.get(code=req_code) 
+        playerList = Player.objects.filter(code=req_code)
+
+        curr_drawer = lobby.curr_drawer
+
+        if(lobby.count >= len(lobby.player_set.all())):
+            curr_drawer = ""
+
+        msg = json.loads({
+            "word": random.choices(game_objects),
+            "scoreboard": [[t.player_name,Leaderboard.objects.get(user = t)] for t in playerList],
+            "drawer": curr_drawer
+
+        })
+
+        return HttpResponse(msg, status = 200)
 

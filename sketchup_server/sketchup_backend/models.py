@@ -7,12 +7,13 @@ class Lobby(models.Model):
         return self.code
     code = models.CharField(max_length=32, primary_key=True)
     curr_drawer = models.CharField(max_length=64,default='NULL')
+    count = models.IntegerField(default=0)
 
 class Player(models.Model):
     def __str__(self):
         return self.player_name 
     player_name = models.CharField(name="player_name",max_length=64)
-    code = models.ForeignKey(Lobby,null=True, on_delete=models.CASCADE)
+    code = models.ForeignKey(Lobby, null=True, on_delete=models.CASCADE)
 
 class Leaderboard(models.Model):
     user = models.ForeignKey(Player, name="Leader Name", on_delete=models.CASCADE)
