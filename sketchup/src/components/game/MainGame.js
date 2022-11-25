@@ -28,6 +28,13 @@ class MainGame extends Component {
         };
         
         this.refreshGameState();
+        
+    }
+
+    componentDidMount(){
+        setInterval(function(){
+            this.refreshGameState()
+        },10000)
     }
 
     refreshGameState = () => {
